@@ -1,0 +1,52 @@
+---
+title: "Untitled"
+author: "Frederick J. Boehm"
+date: "1/27/2020"
+output: html_document
+---
+
+## Overview
+
+We read the csv file for preliminary survival data for all subjects. 
+
+```{r}
+library(magrittr)
+```
+
+
+```{r}
+dat <- readr::read_csv("../data/raw_data/Chal 52 WSB F2 batch 1 survival 27Jan2020.csv", col_names = TRUE, skip = 1, col_types = "iccccccdc")
+dat$last_obs <- dat$`DATE OF DEATH`
+dat$last_obs <- lubridate::mdy(dat$last_obs)
+dat$last_obs[is.na(dat$last_obs)] <- lubridate::today()
+```
+
+
+# F2 only
+
+We now examine only the F2 subjects
+
+```{r}
+table(dat$sex)
+# recode sex
+dat$female <- 1
+dat$female[stringr::str_starts(dat$Gender, "M")] <- 0
+# recode blaze 
+dd <- dat %>%
+  dplyr::mutate(blaze_numeric = !(Blaze == "-")) %>%
+  dplyr::filter(stringr::str_ends(Genotype, "F2")) %>% #choose F2s only
+  dplyr::select(- Blaze) %>%
+  dplyr::rename(blaze = blaze_numeric) %>%
+  dplyr::mutate(days = last_obs - lubridate::as_date("2019-10-22")) %>%
+  dplyr::mutate(dead = days < max(days))
+
+(survival::coxph(survival::Surv(time = days, event = dead) ~ Coat + blaze, 
+                data = dd))
+survival::survfit(survival::Surv(time = days, event = dead) ~ Coat, 
+                data = dd) %>% 
+  survminer::ggsurvplot()
+```
+
+
+## Questions
+
