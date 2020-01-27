@@ -1,0 +1,17 @@
+Package: intercrosses
+Title: What the Package Does (One Line, Title Case)
+Version: 0.0.0.9000
+Authors@R:
+    person(given = "Frederick",
+           family = "Boehm",
+           role = c("aut", "cre"),
+           email = "frederick.boehm@gmail.com",
+           comment = c(ORCID = ""))
+Description: What the package does (one paragraph).
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: bookdown,
+    here
+Suggests: devtools,
+    git2r
