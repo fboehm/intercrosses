@@ -50,3 +50,5 @@ survival::survfit(survival::Surv(time = days, event = dead) ~ Coat,
 
 ## Questions
 
+
+  
